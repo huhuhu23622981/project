@@ -8,7 +8,7 @@
 ![首頁(VIP)](https://huhuhu23622981.github.io/project/images/pic4.png)
 ![首頁(VVIP)](https://huhuhu23622981.github.io/project/images/pic5.png)
 
-> 產品渲染與功能頁面
+> 產品渲染與報表頁面
 
 ![菜單+購物車](https://huhuhu23622981.github.io/project/images/pic7.png)
 ![各項報表](https://huhuhu23622981.github.io/project/images/pic8.png)
