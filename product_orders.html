@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者訂單查看</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/my.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+
+        #orders {
+            display: none;
+        }
+    </style>
+
+<body>
+    <section id="sec02" class="d-none">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">
+                        <div class="h1">訂單管理</div>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product.html">首頁</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product-control-panel_v1.html">控制台</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product-menu-panel_v1.html">新增菜單</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product-chart.html">報表</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product-menu_cart.html">菜單</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="product_orders.html">訂單管理</a>
+                            </li>
+                        </ul>
+                        <div>
+                            <span class="h4 text-info fw-900 me-3 d-none" id="sec02_username_showtext">歡迎會員: <span
+                                    class="h3 text-warning" id="sec02_username_text">xxx</span></span>
+                            <button class="btn btn-danger d-none" id="sec02_logout_btn">登出</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div class="container mt-3">
+                <div>
+                    <h2>所有訂單</h2>
+                    <div id="orders">載入中...</div>
+                </div>
+                <div id="orderModal" class="modal">
+                    <div class="modal-content">
+                        <span onclick="closeModal()" style="float:right;cursor:pointer;">&times;</span>
+                        <h2>訂單詳細內容</h2>
+                        <div id="orderDetails">請選擇訂單</div>
+                    </div>
+                </div>
+            </div>
+    </section>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(function () {
+            // 確認uid是否合法
+            if (getCookie("Uid01")) {
+                // 將uid01傳遞至後端API執行驗證
+                // input:{"uid01" : "xxxxx"}
+                var JSONdata = {};
+                JSONdata["uid01"] = getCookie("Uid01");
+                console.log(JSON.stringify(JSONdata));
+
+                $.ajax({
+                    type: "POST",
+                    url: "product_menu_control_api_v1.php?action=checkuid",
+                    data: JSON.stringify(JSONdata),
+                    dataType: "json",
+                    success: showdata_checkuid,
+                    error: function () {
+                        Swal.fire({
+                            title: "API介接錯誤!",
+                            text: "product_menu_control_api_v1.php?action=checkuid",
+                            icon: "error",
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: "請先登入會員!",
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product.html";
+                    }
+                });
+            }
+        });
+
+        // 按鈕監聽 (sec02_logout_btn)
+        $("#sec02_logout_btn").click(function () {
+            setCookie("Uid01", "", 7);
+            location.href = "product.html";
+        });
+
+        function showdata_checkuid(data) {
+            console.log(data);
+            if (data.state) {
+                if (data.data.Username === 'admin') {
+                    document.getElementById("orders").style.display = "block";
+                    // 顯示歡迎訊息
+                    $("#sec02_username_showtext").removeClass("d-none");
+                    $("#sec02_username_text").text(data.data.Username);
+
+                    // 顯示登出按鈕
+                    $("#sec02_logout_btn").removeClass("d-none");
+                    $("#sec02_addmenu").removeClass("d-none");
+
+                    // 顯示section
+                    $("#sec02").removeClass("d-none");
+
+                    fetchOrders();
+                } else {
+                    Swal.fire({
+                        title: "你沒有權限!",
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: "確認",
+                        denyButtonText: `Don't save`,
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            location.href = "product.html";
+                        }
+                    });
+                }
+            } else {
+                Swal.fire({
+                    title: "請先登入會員!",
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product.html";
+                    }
+                });
+            }
+        }
+
+        window.fetchOrders = async function () {
+            const response = await fetch('product_orders_api_v1.php?action=getAllOrders');
+            const data = await response.json();
+            if (data.success) {
+                renderOrders(data.orders);
+            } else {
+                document.getElementById('orders').innerHTML = '<p>無訂單資料</p>';
+            }
+        }
+
+        async function fetchOrderDetails(orderId) {
+            console.log("Fetching details for order:", orderId);
+            const response = await fetch(`product_orders_api_v1.php?action=getOrderDetails&orderId=${orderId}`);
+            const data = await response.json();
+            console.log(data.success);
+            if (data.success) {
+                renderOrderDetails(data.items);
+                document.getElementById('orderModal').style.display = 'block';
+            } else {
+                document.getElementById('orderDetails').innerHTML = '<p>無詳細資料</p>';
+            }
+        }
+
+        window.deleteOrder = async function (orderId) {
+            console.log("deleteOrder() 被呼叫，訂單ID:", orderId);
+            // 彈出確認框
+            const result = await Swal.fire({
+                title: "確定要刪除這筆訂單嗎？",
+                text: "此操作無法復原！",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "是，刪除！",
+                cancelButtonText: "取消"
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`product_orders_api_v1.php?action=deleteOrder&orderId=${orderId}`, {
+                        method: "DELETE"
+                    });
+
+                    // 檢查是否請求成功
+                    if (!response.ok) {
+                        throw new Error('HTTP 請求失敗，狀態碼：' + response.status);
+                    }
+
+                    const data = await response.json();
+
+                    console.log("API 回應:", data);
+
+                    if (data.success) {
+                        Swal.fire("刪除成功！", "訂單已從系統移除。", "success");
+
+                        setTimeout(() => {
+                            const orderRow = document.getElementById(`orderRow_${orderId}`);
+                            console.log("嘗試移除的訂單行:", orderRow);
+                            if (orderRow) {
+                                orderRow.remove();
+                            } else {
+                                console.error(`⚠️ 找不到該訂單行，ID: orderRow_${orderId}`);
+                            }
+                        }, 100);
+                    } else {
+                        Swal.fire("刪除失敗", data.message || "發生錯誤，請稍後再試", "error");
+                    }
+                } catch (error) {
+                    Swal.fire("刪除失敗", data.message || "發生錯誤，請稍後再試", "error");
+                }
+            }
+        }
+
+        function renderOrders(orders) {
+            let html = '<table id="adminOrderTable" class="table table-striped table-bordered"><thead><tr><th>訂單編號</th><th>總金額</th><th>時間</th><th>狀態</th><th>操作</th></tr></thead><tbody>';
+            orders.forEach(order => {
+                html += `<tr id="orderRow_${order.id}">
+                            <td>${order.id}</td>
+                            <td>${order.total_price}</td>
+                            <td>${order.created_at}</td>
+                            <td>
+                                <select onchange="updateOrderStatus(${order.id}, this.value)">
+                                    <option value="0" ${parseInt(order.status) === '0' ? 'selected' : ''}>處理中</option>
+                                    <option value="1" ${parseInt(order.status) === '1' ? 'selected' : ''}>已完成</option>
+                                    <option value="2" ${parseInt(order.status) === '2' ? 'selected' : ''}>已取消</option>
+                                </select>
+                            </td>
+                            <td><button onclick="fetchOrderDetails(${order.id})">查看</button>
+                            <button onclick="deleteOrder(${order.id})" style="color: red;">移除</button>
+                            </td> 
+                         </tr>`;
+            });
+            html += '</tbody></table>';
+            document.getElementById('orders').innerHTML = html;
+
+            $('#adminOrderTable').DataTable({
+                "language": {
+                    "paginate": { "previous": "上一頁", "next": "下一頁" },
+                    "search": "搜尋：",
+                    "lengthMenu": "顯示 _MENU_ 筆資料",
+                    "info": "顯示 _START_ 到 _END_ ，共 _TOTAL_ 筆訂單"
+                }
+            });
+        }
+
+        function renderOrderDetails(items) {
+            let html = '<table><tr><th>商品ID</th><th>名稱</th><th>單價</th><th>數量</th></tr>';
+            items.forEach(item => {
+                html += `<tr><td>${item.product_id}</td><td>${item.Name}</td><td>${item.price}</td><td>${item.quantity}</td></tr>`;
+            });
+            html += '</table>';
+            document.getElementById('orderDetails').innerHTML = html;
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+
+        // 監聽整個 window，點擊任意地方關閉 modal
+        window.onclick = function (event) {
+            const modal = document.getElementById('orderModal');
+            // 如果點擊的是 modal 背景（即 modal 本身）而非內容區域，則關閉 modal
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchOrders);
+
+        function updateOrderStatus(orderId, status) {
+            fetch('product_orders_api_v1.php?action=OrderStatus', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    orderId: orderId,
+                    status: status
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: "狀態更新成功!",
+                            icon: "success",
+                            draggable: true
+                        }).then(() => {
+                             //  更新成功後，重新取得資料
+                            fetchOrders();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "狀態更新失敗...",
+                            text: "狀態更新失敗!",
+                        });
+                    }
+                });
+        }
+
+
+
+        // from w3school
+        function setCookie(cname, cvalue, exdays) {
+            const d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+    </script>
+</body>
+
+</html>

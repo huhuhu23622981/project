@@ -1,0 +1,273 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Klee+One&family=Noto+Sans+TC:wght@100..900&display=swap');
+:root{
+    --color01: #E1DCD9;
+    --color02: #8f8681;
+    --color03: #A67F78;
+    --color04: #32435F;
+
+    --color05: #A6C2CE;
+    --color06: #9C8F96;
+    --color07: #EBC57C;
+    --color08: #6B799E;
+
+    --color09: #DCC1B0;
+    --color10: #869DAB;
+    --color11: #847072;
+    --color12: #3D313F;
+
+    --color13: #6C838B;
+    --color14: #BB7748;
+    --color15: #9E6D70;
+    --color16: #7F726A;
+
+    --color17: #EAC9C0;
+    --color18: #DAB2D3;
+    --color19: #9EDAE3;
+    --color20: #65C4D8;
+
+    --color21: #ECE4E2;
+    --color22: #FCD3D1;
+    --color23: #FCDFF3;
+    --color24: #FE929F;
+
+    --color25: #F2DD66;
+    --color26: #9A1B27;
+    --color27: #747BA9;
+    --color28: #3B3857;
+
+    --color29: #CC5B3B;
+    --color30: #982827;
+    --color31: #92617E;
+    --color32: #3C1832;
+
+    --color33: #FEF5D4;
+    --color34: #FFD6AA;
+    --color35: #EFBAD6;
+    --color36: #DADAFC;
+
+    --color37: #F7EAE2;
+    --color38: #EADB80;
+    --color39: #AEDDEF;
+    --color40: #E1B4D3;
+
+    --color41: #F0E4D4;
+    --color42: #F9D9CA;
+    --color43: #D18063;
+    --color44: #917B56;
+
+    --textcolor01: #1E3A5F;
+    --textcolor02: #333333;
+    --textcolor03: #F5F5DC;
+}
+/* 文字粗體 */
+.fw-100{
+    font-weight: 100;
+}
+.fw-200{
+    font-weight: 200;
+}
+.fw-300{
+    font-weight: 300;
+}
+.fw-400{
+    font-weight: 400;
+}
+.fw-500{
+    font-weight: 500;
+}
+.fw-600{
+    font-weight: 600;
+}
+.fw-700{
+    font-weight: 700;
+}
+.fw-800{
+    font-weight: 800;
+}
+.fw-900{
+    font-weight: 900;
+}
+/* 外層: .myroller 內層: .roller (從上出來)*/
+.myrollert{
+    position: relative;
+    overflow: hidden;
+}
+.myrollert .rollert{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(180deg,rgba(54, 230, 98, 0.2),rgba(205, 235, 38, 0.6));
+    top: -100%;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.myrollert:hover .rollert{
+    top: 0;
+    transition: 1.5s;
+}
+
+/* 外層: .myroller 內層: .roller (從下出來)*/
+.myrollerb{
+    position: relative;
+    overflow: hidden;
+}
+.myrollerb .rollerb{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(180deg,rgba(54, 230, 98, 0.2),rgba(205, 235, 38, 0.6));
+    bottom: -100%;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.myrollerb:hover .rollerb{
+    bottom: 0;
+    transition: bottom 1.5s;
+}
+
+/* 外層: .myroller 內層: .roller (從左出來)*/
+.myrollerl{
+    position: relative;
+    overflow: hidden;
+}
+.myrollerl .rollerl{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(180deg,rgba(54, 230, 98, 0.2),rgba(205, 235, 38, 0.6));
+    top: 0;
+    left: -100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.myrollerl:hover .rollerl{
+    left: 0;
+    transition: left 1.5s;
+}
+
+/* 外層: .myrollerr 內層: .rollerr (從右出來)*/
+.myrollerr{
+    position: relative;
+    overflow: hidden;
+}
+.myrollerr .rollerr{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(180deg,rgba(54, 230, 98, 0.2),rgba(205, 235, 38, 0.6));
+    top: 0;
+    right: -100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.myrollerr:hover .rollerr{
+    right: 0;
+    transition: right 1.5s;
+}
+
+/* 背景圖 */
+.bg-cover{
+    background-position: center center;
+    background-size: cover;
+}
+
+body{
+    font-family: "Klee One", cursive;
+}
+
+/* 背景顏色 */
+
+.bg-001{
+    background-color: var(--color40);
+    color:var(--textcolor02);
+}
+
+.bg-002{
+    background-color: var(--color37);
+    color:var(--textcolor01);
+}
+
+.bg-003{
+    background-color: var(--color38);
+    color:var(--textcolor01);
+}
+
+.bg-004{
+    background-color: var(--color39);
+    color:var(--color29);
+}
+
+.bg-005{
+    background-color: var(--color24);
+    color:var(--color22);
+}
+
+.bg-006{
+    background-color: var(--color09);
+    color:var(--color04);
+}
+
+.bg-007{
+    background-color: var(--color01);
+    color:var(--color03);
+}
+
+.bg-008{
+    background-color: var(--color17);
+    color:var(--color27);
+}
+
+.bg-009{
+    background-color: var(--color05);
+    color: var(--color12);
+}
+
+
+
+/* 1. table table-rwd */
+/* 2. <td data-th="xx"> */
+/* 3. <span class="table-col">xx</span> */
+@media screen and (max-width: 768px){
+    body{
+        background-image: linear-gradient(90deg,rgba(238, 227, 67, 0.2),rgba(95, 168, 202, 0.8));
+    }
+
+    .table-rwd thead{
+        display: none;
+    }
+
+    .table-rwd  tbody tr{
+        display: block;
+        border: 2px solid var(--color15);
+        margin-top: 10px;
+    }
+
+    .table-rwd tbody tr td{
+        display: block;
+        overflow: hidden;
+    }
+
+    .table-rwd tr td::before{
+        content: attr(data-th)" : ";
+        font-weight: 900;
+        font-size: 20px;
+        display: block;
+        float: left;
+        width: 30%;
+        text-align: right;
+        padding-right: 15px;
+    }
+
+    .table-rwd tr td .table-col{
+        display: block;
+        float: left;
+        width: 70%;
+    }
+}

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員管理控制後台</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/my.css">
+</head>
+
+<body>
+    <section id="sec02" class="bg-dark">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">
+                        <div class="h1">控制台</div>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product.html">首頁</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="product-control-panel_v1.html">控制台</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="product-menu-panel_v1.html">新增菜單</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="product-chart.html">報表</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product-menu_cart.html">菜單</a>
+                            </li>
+                            <li class="nav-item" id="orders_admin">
+                                <a class="nav-link" aria-current="page" href="product_orders.html">訂單管理</a>
+                            </li>
+                        </ul>
+                        <div>
+                            <span class="h4 text-info fw-900 me-3 d-none" id="sec02_username_showtext">歡迎會員: <span
+                                    class="h3 text-warning" id="sec02_username_text">xxx</span></span>
+                            <button class="btn btn-danger d-none" id="sec02_logout_btn">登出</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </section>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <table class="table shadow-lg mt-5 table-rwd">
+                    <thead>
+                        <tr>
+                            <th>編號</th>
+                            <th>帳號</th>
+                            <th>Email</th>
+                            <th>註冊時間</th>
+                            <th>等級</th>
+                            <th>功能</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mydata">
+                        <tr>
+                            <td data-th="編號">xx</td>
+                            <td data-th="帳號">xx</td>
+                            <td data-th="Email">xx</td>
+                            <td data-th="註冊時間">xx</td>
+                            <td data-th="等級">xx</td>
+                            <td data-th="功能">
+                                <button class="btn btn-warning me-2" data-bs-toggle="modal"
+                                    data-bs-target="#updateModal" data-id="xx" data-username="xx" data-email="xxxx" data-level="xx"
+                                    id="update_btn">更新</button>
+                                <button class="btn btn-danger">刪除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- updataModal-->
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-bg-warning fw-900">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">會員更新</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="updateModal_username" class="form-label">帳號</label>
+                        <input type="text" class="form-control" disabled id="updateModal_username"
+                            name="updateModal_username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateModal_email" class="form-label">Email</label>
+                        <input type="email" class="form-control is-valid" id="updateModal_email"
+                            name="updateModal_email">
+                        <div class="valid-feedback">符合規則</div>
+                        <div class="invalid-feedback">不符合規則</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="updateModal_update_btn">確認更新</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        var flag_updateModal_email = true;
+        var u_id; // for update
+        $(function () {
+            // 確認uid是否合法
+            if (getCookie("Uid01")) {
+                // 將uid01傳遞至後端API執行驗證
+                // input:{"uid01" : "xxxxx"}
+                var JSONdata = {};
+                JSONdata["uid01"] = getCookie("Uid01");
+                console.log(JSON.stringify(JSONdata));
+
+                $.ajax({
+                    type: "POST",
+                    url: "product_member_control_api_v1.php?action=checkuid",
+                    data: JSON.stringify(JSONdata),
+                    dataType: "json",
+                    success: showdata_checkuid,
+                    error: function () {
+                        Swal.fire({
+                            title: "API介接錯誤!",
+                            text: "product_member_control_api_v1.php?action=checkuid",
+                            icon: "error",
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: "請先登入會員!",
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product.html";
+                    }
+                });
+            }
+        });
+
+        function showdata_checkuid(data) {
+            console.log(data);
+            if (data.state) {
+                if (data.data.Username === "admin")
+            {
+                // 顯示歡迎訊息
+                $("#sec02_username_showtext").removeClass("d-none");
+                $("#sec02_username_text").text(data.data.Username);
+
+                // 顯示登出按鈕
+                $("#sec02_logout_btn").removeClass("d-none");
+
+                // 渲染table資料
+                $.ajax({
+                    type: "GET",
+                    url: "product_member_control_api_v1.php?action=getalldata",
+                    dataType: "json",
+                    success: showdata_getalldata,
+                    async: false,
+                    error: function () {
+                        Swal.fire({
+                            title: "API介接錯誤!",
+                            text: "product_member_control_api_v1.php?action=getalldata",
+                            icon: "error",
+                        });
+                    }
+                });
+
+                // 即時監聽 updateModal_email
+                $("#updateModal_email").bind("input propertychange", function () {
+                    if ($(this).val().length > 2 && $(this).val().length < 11) {
+                        $(this).removeClass("is-invalid");
+                        $(this).addClass("is-valid");
+                        flag_updateModal_email = true;
+                    } else {
+                        $(this).removeClass("is-valid");
+                        $(this).addClass("is-invalid");
+                        flag_updateModal_email = false;
+                    }
+                });
+
+                // 按鈕監聽update_btn
+                $("#mydata #update_btn").click(function () {
+                    console.log($(this).data("id"));
+                    console.log($(this).data("username"));
+                    console.log($(this).data("email"));
+
+                    //將資料同步至modal
+                    u_id = $(this).data("id");
+                    $("#updateModal_username").val($(this).data("username"));
+                    $("#updateModal_email").val($(this).data("email"));
+                });
+
+                // 按鈕監聽 delete_btn
+                $("#mydata #delete_btn").click(function () {
+                    Swal.fire({
+                        title: "確認刪除使用者?",
+                        showDenyButton: true,
+                        showCancelButton: false,
+                        confirmButtonText: "確認",
+                        denyButtonText: `取消`,
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            console.log($(this).data("id"));
+                            // 傳遞至後端API執行刪除行為
+                            var JSONdata = {};
+                            JSONdata["id"] = $(this).data("id");
+                            console.log(JSON.stringify(JSONdata));
+                            $.ajax({
+                                type: "DELETE",
+                                url: "product_member_control_api_v1.php?action=delete",
+                                data: JSON.stringify(JSONdata),
+                                dataType: "json",
+                                success: showdata_delete,
+                                error: function () {
+                                    Swal.fire({
+                                        title: "API介接錯誤!",
+                                        text: "product_member_control_api_v1.php?action=delete",
+                                        icon: "error"
+                                    });
+                                }
+                            });
+                        }
+                    })
+                });
+
+                // 按鈕監聽updateModal_update_btn
+                $("#updateModal_update_btn").click(function () {
+                    if (flag_updateModal_email) {
+                        console.log($("#updateModal_email").val());
+                        // 傳遞至後端API執行更新
+                        var JSONdata = {};
+                        JSONdata["id"] = u_id;
+                        JSONdata["email"] = $("#updateModal_email").val();
+                        console.log(JSON.stringify(JSONdata));
+
+                        $.ajax({
+                            type: "POST",
+                            url: "product_member_control_api_v1.php?action=update",
+                            data: JSON.stringify(JSONdata),
+                            dataType: "json",
+                            success: showdata_update,
+                            error: function () {
+                                Swal.fire({
+                                    title: "API介接錯誤!",
+                                    text: "product_member_control_api_v1.php?action=update",
+                                    icon: "error",
+                                });
+                            }
+                        });
+
+                    } else {
+                        Swal.fire({
+                            title: "欄位內容有錯誤!",
+                            icon: "error",
+                        });
+                    }
+                })
+            }else {
+                Swal.fire({
+                    title: "你沒有權限!",
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product.html";
+                    }
+                });
+            }
+                
+            } else {
+                Swal.fire({
+                    title: "請先登入會員!",
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product.html";
+                    }
+                });
+            }
+
+            // 按鈕監聽 (sec02_logout_btn)
+            $("#sec02_logout_btn").click(function () {
+                setCookie("Uid01", "", 7);
+                location.href = "product.html";
+            });
+        }
+
+        function showdata_getalldata(data) {
+            console.log(data);
+
+            $("#mydata").empty();
+            data.data.forEach(function (item) {
+                var strHTML = `<tr>
+                            <td data-th="編號">${item.ID}</td>
+                            <td data-th="帳號">${item.Username}</td>
+                            <td data-th="Email">${item.Email}</td>
+                            <td data-th="註冊時間">${item.Created_at}</td>
+                            <td data-th="等級">${item.Level}</td>
+                            <td data-th="功能">
+                                <button class="btn btn-warning me-2" data-bs-toggle="modal"
+                                    data-bs-target="#updateModal" data-id="${item.ID}" data-username="${item.Username}" data-email="${item.Email}" data-level="${item.Level}" id="update_btn">更新</button>
+                               <button class="btn btn-danger" data-id="${item.ID}" id="delete_btn">刪除</button>
+                            </td>
+                        </tr>`;
+                $("#mydata").append(strHTML);
+            });
+        }
+
+        function showdata_update(data) {
+            console.log(data);
+            if (data.state) {
+                Swal.fire({
+                    title: data.message,
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    icon: "success",
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product-control-panel_v1.html";
+                    }
+                })
+            } else {
+                Swal.fire({
+                    title: data.message,
+                    icon: "error",
+                });
+            }
+        }
+
+        function showdata_delete(data) {
+            console.log(data);
+            if (data.state) {
+                Swal.fire({
+                    title: data.message,
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    icon: "success",
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product-control-panel_v1.html"
+                    }
+                })
+            } else {
+                Swal.fire({
+                    title: data.message,
+                    icon: "error"
+                });
+            }
+        }
+
+        // from w3school
+        function setCookie(cname, cvalue, exdays) {
+            const d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+    </script>
+</body>
+
+</html>

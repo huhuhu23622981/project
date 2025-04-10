@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>產品銷售量</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/my.css">
+    <style>
+        #chartContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        canvas {
+            margin-bottom: 20px;
+        }
+    </style>
+
+<body>
+    <section id="sec02">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">
+                        <div class="h1">報表</div>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product.html">首頁</a>
+                            </li>
+                            <li class="nav-item d-none" id="control_admin">
+                                <a class="nav-link" aria-current="page" href="product-control-panel_v1.html">控制台</a>
+                            </li>
+                            <li class="nav-item d-none" id="menu_admin">
+                                <a class="nav-link" aria-current="page" href="product-menu-panel_v1.html">新增菜單</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="product-chart.html">報表</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product-menu_cart.html">菜單</a>
+                            </li>
+                            <li class="nav-item d-none" id="orders_admin">
+                                <a class="nav-link" aria-current="page" href="product_orders.html">訂單管理</a>
+                            </li>
+                        </ul>
+                        <div>
+                            <span class="h4 text-info fw-900 me-3 d-none" id="sec02_username_showtext">歡迎會員: <span
+                                    class="h3 text-warning" id="sec02_username_text">xxx</span></span>
+                            <button class="btn btn-danger d-none" id="sec02_logout_btn">登出</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div class="container" id="chartContainer">
+                <div class="row">
+                    <!-- 管理員專屬內容，顯示銷售報表 -->
+                    <div id="adminContent" class="mt-5 d-none">
+                        <h2>管理員專屬報表</h2>
+                        <label for="reportRange">選擇時間範圍：</label>
+                        <select id="reportRange" class="form-select">
+                            <option value="" disabled selected>--請選擇報表--</option>
+                            <option value="daily">每日報表</option>
+                            <option value="weekly">每週報表</option>
+                            <option value="monthly">每月報表</option>
+                        </select>
+
+                        <canvas id="salesChart_admin" class="my-4"></canvas>
+
+                        <div id="reportResult" class="mt-3">
+                            <p><strong>總銷售額：</strong> <span id="totalSales">-</span></p>
+                            <p><strong>訂單數量：</strong> <span id="totalOrders">-</span></p>
+                        </div>
+                    </div>
+                    <div class="row" id="eachProduct">
+                        <div class="m-3" id="menuListContainer">
+                            <h3>菜單</h3>
+                            <select id="menuSelect" class="form-control form-select-lg">
+                                <option value="">-- 請選擇商品 --</option>
+                                <!-- 菜單項目會動態插入這裡 -->
+                            </select>
+                        </div>
+                        <!-- 右側的訂單歷史與圖表顯示區域 -->
+                        <div class="m-3">
+                            <!-- 商品銷售數量圖表 -->
+                            <canvas id="salesChart" width="400" height="200"></canvas>
+                        </div>
+                        <div class="row" id="chart_ap">
+                            <div>
+                                <canvas id="allSalesChart" width="400" height="200"></canvas>
+                            </div>
+                            <div>
+                                <canvas id="ProductDataChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script>
+        $(function () {
+            // 確認uid是否合法
+            if (getCookie("Uid01")) {
+                // 將uid01傳遞至後端API執行驗證
+                // input:{"uid01" : "xxxxx"}
+                var JSONdata = {};
+                JSONdata["uid01"] = getCookie("Uid01");
+                console.log(JSON.stringify(JSONdata));
+
+                $.ajax({
+                    type: "POST",
+                    url: "product_menu_control_api_v1.php?action=checkuid",
+                    data: JSON.stringify(JSONdata),
+                    dataType: "json",
+                    success: showdata_checkuid,
+                    error: function () {
+                        Swal.fire({
+                            title: "API介接錯誤!",
+                            text: "product_menu_control_api_v1.php?action=checkuid",
+                            icon: "error",
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: "請先登入會員!",
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product.html";
+                    }
+                });
+            }
+        });
+
+        // 按鈕監聽 (sec02_logout_btn)
+        $("#sec02_logout_btn").click(function () {
+            setCookie("Uid01", "", 7);
+            location.href = "product.html";
+        });
+
+        function showdata_checkuid(data) {
+            console.log(data);
+            if (data.state) {
+                // 顯示歡迎訊息
+                $("#sec02_username_showtext").removeClass("d-none");
+                $("#sec02_username_text").text(data.data.Username);
+
+                // 顯示登出按鈕
+                $("#sec02_logout_btn").removeClass("d-none");
+                $("#sec02_addmenu").removeClass("d-none");
+
+                if (data.data.Username === 'admin') {
+                    console.log(data.data.Username);
+                    $("#adminContent").removeClass("d-none");
+                    $("#control_admin").removeClass("d-none");
+                    $("#menu_admin").removeClass("d-none");
+                    $("#orders_admin").removeClass("d-none");
+                }
+
+            } else {
+                Swal.fire({
+                    title: "請先登入會員!",
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product.html";
+                    }
+                });
+            }
+        }
+
+        let salesChart_admin; // 儲存 Chart.js 物件
+
+        $(document).ready(function () {
+            $("#reportRange").change(function () {
+                let selectedRange = $(this).val(); // 取得選擇的時間範圍
+                let action = "";
+
+                if (selectedRange === "") {
+                    // 如果沒有選擇報表範圍，顯示提示信息
+                    console.log("請選擇一個報表範圍");
+                    return; // 不發送請求
+                }
+
+                // 根據選擇的範圍設定對應的 API action
+                if (selectedRange === "daily") {
+                    action = "getDailySales";
+                } else if (selectedRange === "weekly") {
+                    action = "getWeeklySales";
+                } else if (selectedRange === "monthly") {
+                    action = "getMonthlySales";
+                }
+
+                $.ajax({
+                    url: `product_orders_api_v1.php?action=${action}`,  // 傳遞對應的 action
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        console.log(response); // 確保 API 回傳資料正確
+
+                        if (response.success && response.salesData.length > 0) {
+                            // 更新銷售數據
+                            $("#totalSales").text(`$${response.salesData[0].totalSales}`);
+                            $("#totalOrders").text(`${response.salesData[0].orderCount} 筆`);
+
+                            updateChart(response.salesData);
+                        } else {
+                            console.log("API 請求失敗，回傳的 success 為 false");
+                            $("#totalSales").text("-");
+                            $("#totalOrders").text("-");
+
+                            // 清空圖表
+                            updateChart([]);
+                        }
+                    },
+                    error: function (error) {
+                        console.log("AJAX 發生錯誤:", error);
+                    }
+                });
+            });
+
+            // 初始化 Chart.js 圖表
+            function createChart() {
+                let ctx = document.getElementById("salesChart_admin").getContext("2d");
+                salesChart = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: "銷售額 ($)",
+                                backgroundColor: "rgba(54, 162, 235, 0.5)",
+                                borderColor: "rgba(54, 162, 235, 1)",
+                                borderWidth: 1,
+                                data: [],
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                            },
+                        },
+                    },
+                });
+            }
+
+            // 更新圖表數據
+            function updateChart(salesData) {
+                console.log("接收到的 salesData:", salesData);
+                let labels = salesData.map(item => item.period);
+                let salesAmount = salesData.map(item => parseFloat(item.totalSales));
+
+                salesChart.data.labels = labels;
+                salesChart.data.datasets[0].data = salesAmount;
+                salesChart.update();
+            }
+
+            // 建立初始圖表
+            createChart();
+
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            Promise.all([fetchMenuList(), fetchAllSalesData(), fetchInventoryData()])
+                .then(function () {
+                    // 所有请求成功后执行图表渲染等操作
+                    console.log('所有数据已加载，准备渲染图表');
+                })
+                .catch(function (error) {
+                    console.error('发生错误:', error);
+                });
+        });
+
+        // 獲取菜單列表
+        function fetchMenuList() {
+            fetch('product_orders_api_v1.php?action=getMenuList')  // 從後端 API 獲取菜單列表
+                .then(response => {
+                    if (!response.ok) {  // 如果 HTTP 狀態碼不是 200 (OK)，直接拋出錯誤
+                        throw new Error(`HTTP 錯誤: ${response.status} ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('菜單數據:', data);
+                    if (data.success && data.menuList && data.menuList.length > 0) {
+                        renderMenuList(data.menuList);  // 渲染菜單
+                    } else {
+                        console.error('API 請求失敗', data);  // 顯示更多錯誤訊息
+                    }
+                })
+                .catch(error => console.error('Error fetching menu list:', error));
+        }
+
+        // 渲染菜單列表
+        function renderMenuList(menuList) {
+            const menuSelect = document.getElementById('menuSelect');
+            // 清空原有選項（如果有的話）
+            menuSelect.innerHTML = '';
+
+            // 創建一個預設的選項
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = '請選擇商品';
+            menuSelect.appendChild(defaultOption);
+
+            menuList.forEach(menu => {
+                // console.log('菜單項目:', menu);  // 查看每個菜單項目的內容
+                const option = document.createElement('option');
+                option.value = menu.productId;  // 設定商品 ID 作為 value
+                option.textContent = menu.productName;  // 顯示商品名稱
+                menuSelect.appendChild(option);
+            });
+
+            // 監聽下拉選單變更，選擇商品時獲取銷售數據
+            menuSelect.addEventListener('change', function () {
+                const productId = this.value;
+                if (productId) {
+                    fetchSalesData(productId);  // 根據選擇的商品 ID 顯示銷售數據
+                }
+            });
+        }
+
+        function fetchSalesData(productId) {
+            if (!productId) return;  // 如果沒有選擇商品，則不執行
+            fetch(`product_orders_api_v1.php?action=getSalesData&product_id=${productId}`)  // 根據商品 ID 查詢銷售數據
+                .then(response => {
+                    console.log("API 回應狀態:", response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('返回的數據:', data);
+                    console.log(data.salesData);
+                    if (data.success && data.salesData.length > 0) {
+                        let labels = data.salesData.map(item => item.productName);  // 產品名稱
+                        let sales = data.salesData.map(item => parseInt(item.totalSales));  // 銷售數量
+                        console.log('Labels:', labels);  // 確保 labels 取得正確的數據
+                        console.log('Sales:', sales);    // 確保 sales 取得正確的數據
+                        generateSalesChart(labels, sales, 'salesChart');  // 顯示圖表
+                    } else {
+                        console.error('API返回的數據無效或無銷售數據', data)
+                    }
+                })
+                .catch(error => console.error('Error fetching sales data:', error));
+        }
+
+        // 繪製銷售圖表
+        function generateSalesChart(labels, sales, canvasId) {
+            console.log("進入 generateSalesChart，canvasId:", canvasId);
+
+            // 確保 canvas 存在
+            if (!canvasId) {
+                console.error("canvasId 未提供");
+                return;
+            }
+
+            // 刪除舊的 canvas
+            let oldCanvas = document.getElementById(canvasId);
+            if (oldCanvas) {
+                oldCanvas.remove();
+                console.log("已刪除舊 canvas:", canvasId);
+            }
+
+            // 新增新的 canvas
+            let newCanvas = document.createElement("canvas");
+            newCanvas.id = canvasId;
+            newCanvas.width = 400;
+            newCanvas.height = 200;
+
+            // 將新圖表插入到 #ProductDataChart 之前
+            let menuListContainer = document.getElementById("chart_ap");
+            if (menuListContainer) {
+                menuListContainer.parentNode.insertBefore(newCanvas, menuListContainer);
+            }
+            console.log("新增 canvas 成功:", canvasId);
+
+            // 繪製圖表
+            let ctx = newCanvas.getContext("2d");
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '銷售數量',
+                        data: sales,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            console.log("圖表生成成功");
+        }
+
+        function fetchAllSalesData() {
+            fetch('product_orders_api_v1.php?action=getSalesData')  // 假设这是获取所有商品销售数据的 API
+                .then(response => response.json())
+                .then(data => {
+                    console.log('所有商品的銷售數據:', data);
+                    if (data.success && data.salesData && data.salesData.length > 0) {
+                        let labels = data.salesData.map(item => item.productName);  // 获取所有商品名称
+                        let sales = data.salesData.map(item => parseInt(item.totalSales));  // 获取所有商品的销售量
+                        generateAllSalesChart(labels, sales, 'allSalesChart');  // 使用相同的函数绘制图表
+                    } else {
+                        console.error('无销售数据', data);
+                    }
+                })
+                .catch(error => console.error('Error fetching all sales data:', error));
+        }
+
+        function fetchInventoryData() {
+            fetch('product_orders_api_v1.php?action=getProduct')  // 假设这是获取所有商品库存数据的 API
+                .then(response => response.json())
+                .then(data => {
+                    console.log('所有商品的庫存數據:', data);
+                    if (data.success && Array.isArray(data.inventoryData) && data.inventoryData.length > 0) {
+                        console.log(data.inventoryData);
+                        console.log(data.success);
+                        let labels = data.inventoryData.map(item => item.productName);  // 获取所有商品名称
+                        let stock = data.inventoryData.map(item => parseInt(item.stock));  // 获取所有商品的库存数量
+                        generateInventoryChart(labels, stock, 'ProductDataChart');  // 使用相同的函数绘制图表
+                    } else {
+                        console.error('无库存数据', data);
+                    }
+                })
+                .catch(error => console.error('Error fetching inventory data:', error));
+        }
+
+        function generateAllSalesChart(labels, sales, canvasId) {
+            console.log("進入 generateAllSalesChart，canvasId:", canvasId);
+
+            let container = document.getElementById("salesChartContainer");
+            // 確保 canvas 存在
+            if (!canvasId) {
+                console.error("canvasId 未提供");
+                return;
+            }
+
+            // 刪除舊的 canvas
+            let oldCanvas = document.getElementById(canvasId);
+            if (oldCanvas) {
+                oldCanvas.remove();
+                console.log("已刪除舊 canvas:", canvasId);
+            }
+
+            // 新增新的 canvas
+            let newCanvas = document.createElement("canvas");
+            newCanvas.id = canvasId;
+            newCanvas.width = 200;
+            newCanvas.height = 100;
+
+            let h2 = document.createElement("h2");
+            h2.innerText = "所有商品銷售圖表";  // 设置标题
+
+            // 將新圖表插入到 #menuListContainer 之前
+            let menuListContainer = document.getElementById("ProductDataChart");
+            if (menuListContainer) {
+                menuListContainer.parentNode.insertBefore(newCanvas, menuListContainer);
+            }
+            console.log("新增 canvas 成功:", canvasId);
+
+            chartContainer.appendChild(h2);  // 插入 h2
+            chartContainer.appendChild(newCanvas);  // 插入 canvas
+
+            // 繪製圖表
+            let ctx = newCanvas.getContext("2d");
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '總銷售數量',
+                        data: sales,
+                        backgroundColor: ['rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'],
+                        borderColor: ['rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,  // 自動調整大小
+                    plugins: {
+                        datalabels: {
+                            display: true, // 強制顯示數值
+                            color: 'white',  // 文字顏色
+                            font: {
+                                weight: 'bold',  // 字體粗細
+                                size: 16  // 字體大小
+                            },
+                            formatter: (value, ctx) => {
+                                let total = ctx.chart._metasets[0].data.reduce((acc, data) => acc + data._model.value, 0);
+                                let percentage = ((value / total) * 100).toFixed(2);
+                                return `${percentage}%`;  // 顯示百分比
+                            },
+                            anchor: 'center',  // 顯示文字位置
+                            align: 'center'    // 文字對齊
+                        }
+                    },
+                    // cutout: '40%'
+                }
+            });
+
+            console.log("總銷售數量圖表生成成功");
+        }
+
+        function generateInventoryChart(labels, stock, canvasId) {
+            console.log("進入 generateInventoryChart，canvasId:", canvasId);
+
+            let container = document.getElementById("inventoryChartContainer");
+            // 確保 canvas 存在
+            if (!canvasId) {
+                console.error("canvasId 未提供");
+                return;
+            }
+
+            // 刪除舊的 canvas
+            let oldCanvas = document.getElementById(canvasId);
+            if (oldCanvas) {
+                oldCanvas.remove();
+                console.log("已刪除舊 canvas:", canvasId);
+            }
+
+            // 新增新的 canvas
+            let newCanvas = document.createElement("canvas");
+            newCanvas.id = canvasId;
+            newCanvas.width = 200;
+            newCanvas.height = 100;
+
+            let h2 = document.createElement("h2");
+            h2.innerText = "所有商品數量圖表";  // 设置标题
+
+            // 將新圖表插入到 #menuListContainer 之前
+            let menuListContainer = document.getElementById("eachProduct");
+            if (menuListContainer) {
+                menuListContainer.parentNode.insertBefore(newCanvas, menuListContainer);
+            }
+            console.log("新增 canvas 成功:", canvasId);
+
+            chartContainer.appendChild(h2);  // 插入 h2
+            chartContainer.appendChild(newCanvas);  // 插入 canvas
+
+            // 繪製圖表
+            let ctx = newCanvas.getContext("2d");
+            new Chart(ctx, {
+                type: 'bar',  // 長條圖
+                data: {
+                    labels: labels,  // 商品名稱
+                    datasets: [{
+                        label: '庫存數量',
+                        data: stock,  // 庫存數量
+                        backgroundColor: ['rgba(255, 99, 132, 0.2)',  // 顏色選擇
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'],
+                        borderColor: ['rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,  // 自動調整大小
+                    plugins: {
+                        datalabels: {
+                            display: true, // 強制顯示數值
+                            color: 'black',  // 文字顏色
+                            font: {
+                                weight: 'bold',  // 字體粗細
+                                size: 16  // 字體大小
+                            },
+                            formatter: (value) => {
+                                return `${value}`;  // 顯示庫存數量
+                            },
+                            anchor: 'end',  // 顯示文字位置
+                            align: 'top'    // 文字對齊
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,  // Y軸從 0 開始
+                        }
+                    }
+                }
+            });
+
+            console.log("庫存數量圖表生成成功");
+        }
+
+        // from w3school
+        function setCookie(cname, cvalue, exdays) {
+            const d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+    </script>
+</body>
+
+</html>

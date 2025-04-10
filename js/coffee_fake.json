@@ -1,0 +1,430 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "1",
+        "name": "綠意咖啡館",
+        "phone": "02-1234-5678",
+        "address": "台北市信義區松高路123號",
+        "updated": "2025/03/07 12:00:00",
+        "available": "每天營業",
+        "county": "台北市",
+        "town": "信義區",
+        "cunli": "松高里"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.5654,
+          25.0330
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "2",
+        "name": "綠意咖啡館",
+        "phone": "04-8765-4321",
+        "address": "台中市西區建國北路456號",
+        "updated": "2025/03/07 12:00:00",
+        "available": "每天營業",
+        "county": "台中市",
+        "town": "西區",
+        "cunli": "建國里"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          120.6868,
+          24.1460
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "3",
+        "name": "綠意咖啡館",
+        "phone": "07-2345-6789",
+        "address": "高雄市苓雅區五福路789號",
+        "updated": "2025/03/07 12:00:00",
+        "available": "每天營業",
+        "county": "高雄市",
+        "town": "苓雅區",
+        "cunli": "五福里"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          120.3070,
+          22.6168
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "4",
+        "name": "綠意咖啡館",
+        "phone": "06-3456-7890",
+        "address": "台南市中西區中華西路321號",
+        "updated": "2025/03/07 12:00:00",
+        "available": "每天營業",
+        "county": "台南市",
+        "town": "中西區",
+        "cunli": "中華里"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          120.2270,
+          22.9977
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "5",
+        "name": "綠意咖啡館",
+        "phone": "02-5678-9012",
+        "address": "新北市板橋區文化路123號",
+        "updated": "2025/03/07 12:00:00",
+        "available": "每天營業",
+        "county": "新北市",
+        "town": "板橋區",
+        "cunli": "文化里"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.4627,
+          25.0176
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "6",
+        "name": "綠意咖啡館",
+        "phone": "03-2345-6789",
+        "address": "桃園市桃園區中正路456號",
+        "updated": "2025/03/07 12:00:00",
+        "available": "每天營業",
+        "county": "桃園市",
+        "town": "桃園區",
+        "cunli": "中正里"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.2973,
+          24.9934
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "7",
+        "name": "綠意咖啡館",
+        "phone": "02-8765-4321",
+        "address": "基隆市仁愛區中正路789號",
+        "updated": "2025/03/07 12:00:00",
+        "available": "每天營業",
+        "county": "基隆市",
+        "town": "仁愛區",
+        "cunli": "中正里"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.7414,
+          25.1272
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "8",
+        "name": "綠意咖啡館",
+        "phone": "03-3456-7890",
+        "address": "新竹市東區中華路123號",
+        "updated": "2025/03/07 12:00:00",
+        "available": "每天營業",
+        "county": "新竹市",
+        "town": "東區",
+        "cunli": "中華里"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          120.9675,
+          24.8057
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "9",
+        "name": "綠意咖啡館",
+        "phone": "03-4567-8901",
+        "address": "宜蘭市宜蘭路456號",
+        "updated": "2025/03/07 12:00:00",
+        "available": "每天營業",
+        "county": "宜蘭市",
+        "town": "宜蘭區",
+        "cunli": "宜蘭里"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.7472,
+          24.7616
+        ]
+      }
+    },
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "id": "10",
+            "name": "綠意咖啡館",
+            "phone": "02-5678-1234",
+            "address": "台北市大安區和平東路123號",
+            "updated": "2025/03/07 12:00:00",
+            "available": "每天營業",
+            "county": "台北市",
+            "town": "大安區",
+            "cunli": "和平里"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              121.5416,
+              25.0356
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "id": "11",
+            "name": "綠意咖啡館",
+            "phone": "04-2345-6789",
+            "address": "台中市南區建國路456號",
+            "updated": "2025/03/07 12:00:00",
+            "available": "每天營業",
+            "county": "台中市",
+            "town": "南區",
+            "cunli": "建國里"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              120.6760,
+              24.1421
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "id": "12",
+            "name": "綠意咖啡館",
+            "phone": "07-3456-7890",
+            "address": "高雄市三民區建國路321號",
+            "updated": "2025/03/07 12:00:00",
+            "available": "每天營業",
+            "county": "高雄市",
+            "town": "三民區",
+            "cunli": "建國里"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              120.3014,
+              22.6274
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "id": "13",
+            "name": "綠意咖啡館",
+            "phone": "06-4567-8901",
+            "address": "台南市北區中華路789號",
+            "updated": "2025/03/07 12:00:00",
+            "available": "每天營業",
+            "county": "台南市",
+            "town": "北區",
+            "cunli": "中華里"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              120.2341,
+              23.0161
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "id": "14",
+            "name": "綠意咖啡館",
+            "phone": "02-6789-1234",
+            "address": "新北市中和區中山路123號",
+            "updated": "2025/03/07 12:00:00",
+            "available": "每天營業",
+            "county": "新北市",
+            "town": "中和區",
+            "cunli": "中山里"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              121.4975,
+              24.9932
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "id": "15",
+            "name": "綠意咖啡館",
+            "phone": "03-5678-1234",
+            "address": "桃園市中壢區建國路456號",
+            "updated": "2025/03/07 12:00:00",
+            "available": "每天營業",
+            "county": "桃園市",
+            "town": "中壢區",
+            "cunli": "建國里"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              121.2247,
+              24.9564
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "id": "16",
+            "name": "綠意咖啡館",
+            "phone": "02-1234-8765",
+            "address": "台北市松山區南京東路456號",
+            "updated": "2025/03/07 12:00:00",
+            "available": "每天營業",
+            "county": "台北市",
+            "town": "松山區",
+            "cunli": "南京里"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              121.5863,
+              25.0595
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "id": "17",
+            "name": "綠意咖啡館",
+            "phone": "04-5678-1234",
+            "address": "台中市南區建國北路789號",
+            "updated": "2025/03/07 12:00:00",
+            "available": "每天營業",
+            "county": "台中市",
+            "town": "南區",
+            "cunli": "建國里"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              120.6841,
+              24.1359
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "id": "18",
+            "name": "綠意咖啡館",
+            "phone": "02-1234-5678",
+            "address": "台北市大安區和平東路10號",
+            "updated": "2025/03/07 12:00:00",
+            "available": "每天營業",
+            "county": "台北市",
+            "town": "大安區",
+            "cunli": "和平里"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              121.5432,
+              25.0265
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "id": "19",
+            "name": "綠意咖啡館",
+            "phone": "02-8765-4321",
+            "address": "台北市中山區南京東路300號",
+            "updated": "2025/03/07 12:00:00",
+            "available": "週一至週五營業",
+            "county": "台北市",
+            "town": "中山區",
+            "cunli": "南京里"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              121.5432,
+              25.0265
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "id": "20",
+            "name": "綠意咖啡館",
+            "phone": "02-2345-6789",
+            "address": "台北市內湖區內湖路一段200號",
+            "updated": "2025/03/07 12:00:00",
+            "available": "週末營業",
+            "county": "台北市",
+            "town": "內湖區",
+            "cunli": "內湖里"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              121.5432,
+              25.0265
+            ]
+          }
+        }
+      ]
+    }    
+  ]
+}

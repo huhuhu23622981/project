@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菜單管理</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/my.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <style>
+        /* 背景遮罩 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        /* 視窗內容 */
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            border-radius: 10px;
+        }
+
+        /* 關閉按鈕 */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        /* 表格樣式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <section id="sec02" class="bg-dark">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">
+                        <div class="h1">菜單</div>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product.html">首頁</a>
+                            </li>
+                            <li class="nav-item d-none" id="control_admin">
+                                <a class="nav-link" aria-current="page" href="product-control-panel_v1.html">控制台</a>
+                            </li>
+                            <li class="nav-item d-none" id="menu_admin">
+                                <a class="nav-link" aria-current="page" href="product-menu-panel_v1.html">新增菜單</a>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="product-menu_cart.html">菜單</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product-chart.html">報表</a>
+                            </li>
+                            <li class="nav-item d-none" id="orders_admin">
+                                <a class="nav-link" aria-current="page" href="product_orders.html">訂單管理</a>
+                            </li>
+                        </ul>
+                        <div>
+                            <span class="h4 text-info fw-900 me-3 d-none" id="sec02_username_showtext">歡迎會員: <span
+                                    class="h3 text-warning" id="sec02_username_text">xxx</span></span>
+                            <button class="btn btn-danger d-none" id="sec02_logout_btn">登出</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </section>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-8">
+                <table class="table shadow-lg mt-2 table-rwd display" id="menuTable">
+                    <thead>
+                        <tr>
+                            <th>編號</th>
+                            <th>產品</th>
+                            <th>價格</th>
+                            <th>數量</th>
+                            <th>狀態</th>
+                            <th>功能</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mydata">
+                        <tr>
+                            <td data-th="編號">xx</td>
+                            <td data-th="產品">xx</td>
+                            <td data-th="價格">xx</td>
+                            <td data-th="數量">xx</td>
+                            <td data-th="狀態">xx</td>
+                            <td data-th="功能">
+                                <button class="btn btn-warning btn-lg me-2 add-to-cart" data-id="xx" data-name="xx"
+                                    data-price="xxxx" data-count="xx" data-status="xxxx">加入購物車</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-3">
+                <button id="view-history-orders" class="m-3 btn btn-warning">查看歷史訂單</button>
+                <div id="orderHistoryModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h3>歷史訂單</h3>
+                        <div id="orderHistoryContainer" style="display:none;"></div>
+                    </div>
+                </div>
+
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>商品名稱</th>
+                            <th>價格</th>
+                            <th>數量</th>
+                            <th>總價</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modal-cart-body"></tbody>
+                </table>
+            </div>
+            <div class="col-1">
+                <h3>總計: <span id="total_price">0</span></h3>
+                <button class="btn btn-info btn-lg" id="checkout">結帳</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        let cart = [];
+        let cartData = {
+            Uid01: getCookie("Uid01"),  // 取得會員唯一識別碼
+            cart: cart
+        };
+        console.log("發送的資料:", cartData);
+        $(function () {
+            // 確認uid是否合法
+            if (getCookie("Uid01")) {
+                // 將uid01傳遞至後端API執行驗證
+                // input:{"uid01" : "xxxxx"}
+                var JSONdata = {};
+                JSONdata["uid01"] = getCookie("Uid01");
+                console.log(JSON.stringify(JSONdata));
+
+                $.ajax({
+                    type: "POST",
+                    url: "product_menu_control_api_v1.php?action=checkuid",
+                    data: JSON.stringify(JSONdata),
+                    dataType: "json",
+                    success: showdata_checkuid,
+                    error: function () {
+                        Swal.fire({
+                            title: "API介接錯誤!",
+                            text: "product_menu_control_api_v1.php?action=checkuid",
+                            icon: "error",
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: "請先登入會員!",
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product.html";
+                    }
+                });
+            }
+        });
+
+        function showdata_addmenu(data) {
+            console.log(data);
+            if (data.state) {
+                Swal.fire({
+                    title: data.message,
+                    icon: "success"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "product-menu-panel_v1.html";
+                    }
+                });;
+            } else {
+                Swal.fire({
+                    title: data.message,
+                    icon: "error"
+                });
+            }
+        }
+
+        // **加入購物車(menu)**
+        $(document).on("click", ".add-to-cart-menu", function () {
+            console.log("Button clicked");
+            console.log($(this).attr("data-count"));
+
+            let productId = $(this).data("id");
+            let productName = $(this).attr("data-name");
+            let productPrice = parseFloat($(this).data("price"));
+            let productCount = parseInt($(this).data("count"));
+            let productStatus = $(this).data("status");
+            console.log(productId, productName, productPrice, productCount, productStatus);
+
+            if (productStatus !== "available") {
+                Swal.fire({
+                    icon: "warning",
+                    title: "無法加入購物車",
+                    text: "此商品目前無法購買",
+                });
+                return;
+            }
+
+            let existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ id: productId, name: productName, price: productPrice, quantity: 1 });
+            }
+
+            updateCart();
+
+            // 更新商品庫存數量（減 1）
+            productCount--;
+            $(this).attr("data-count", productCount);
+
+            // 如果數量變成 0，則改變狀態
+            if (productCount === 0) {
+                $(this).data("status", "out of stock").prop("disabled", true).text("已售完");
+
+                // 發送 AJAX 請求，通知後端更新商品狀態
+                $.ajax({
+                    url: "/update-product-status.php", // 你的 PHP API 路徑
+                    type: "POST",
+                    data: {
+                        id: productId,
+                        status: "out of stock"
+                    },
+                    success: function (response) {
+                        console.log(`商品 ${productId} 已更新為 "out of stock"`);
+                    },
+                    error: function () {
+                        console.log(`無法更新商品 ${productId} 的狀態`);
+                    },
+                });
+            }
+            Swal.fire({
+                icon: "success",
+                title: "加入成功！",
+                text: "商品已加入購物車",
+            });
+        });
+
+        // 每秒從後端更新數量
+        setInterval(() => {
+            $.ajax({
+                url: "product_orders_api_v1.php?action=updateStatus",
+                type: "GET",
+                success: function (response) {
+                    if (response.success) {
+                        response.inventoryData.forEach(product => {
+                            let btn = $(`.add-to-cart-menu[data-id='${product.id}']`);
+                            btn.attr("data-count", product.stock);
+
+                            // 如果數量變 0，則設為 "已售完"
+                            if (product.stock === 0) {
+                                btn.data("status", "out of stock").prop("disabled", true).text("已售完");
+                            } else {
+                                btn.data("status", "available").prop("disabled", false).text("加入購物車");
+                            }
+                        });
+                    }
+                },
+                error: function () {
+                    console.log("無法取得商品庫存數據");
+                },
+            });
+        }, 1000); // 每 1 秒更新一次
+
+        // **加入購物車(history)**
+        $(document).on("click", ".add-to-cart-history", function () {
+            console.log("Button clicked");
+            console.log($(this).attr("data-count"));
+            let productId = $(this).data("id");
+            let productName = $(this).attr("data-name");
+            let productPrice = parseFloat($(this).data("price"));
+            let productCount = parseInt($(this).data("count"));
+            let productStatus = $(this).data("status");
+            console.log(productId, productName, productPrice, productCount, productStatus);
+
+            if (productStatus !== "available") {
+                Swal.fire({
+                    icon: "warning",
+                    title: "無法加入購物車",
+                    text: "此商品目前無法購買",
+                });
+                return;
+            }
+
+            if (productCount && productCount > 0) {
+                // 實現歷史訂單加入購物車的邏輯
+                let existingItem = cart.find(item => item.id === productId);
+                if (existingItem) {
+                    existingItem.quantity += productCount; // 累加數量
+                } else {
+                    cart.push({ id: productId, name: productName, price: productPrice, quantity: productCount });
+                }
+
+                updateCart();  // 更新購物車顯示
+                Swal.fire({
+                    icon: "success",
+                    title: "加入成功！",
+                    text: "商品已加入購物車",
+                });
+            } else {
+                console.error("歷史訂單商品資料不完整！");
+            }
+        });
+
+        // 查詢訂單
+        document.getElementById("view-history-orders").addEventListener("click", function () {
+            fetchOrderHistory();
+            document.getElementById("orderHistoryModal").style.display = "block"; // 顯示彈出視窗
+        });
+
+        // 點擊關閉按鈕時隱藏視窗
+        document.querySelector(".close").addEventListener("click", function () {
+            document.getElementById("orderHistoryModal").style.display = "none";
+        });
+
+        // 點擊視窗外部時關閉
+        window.addEventListener("click", function (event) {
+            const modal = document.getElementById("orderHistoryModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+
+        // **更新購物車顯示**
+        function updateCart() {
+            let cartBody = $("#cart-body");
+            cartBody.empty();
+
+            let totalPrice = 0;
+            cart.forEach((item, index) => {
+                let totalItemPrice = item.price * item.quantity;
+                totalPrice += totalItemPrice;
+
+                cartBody.append(` <tr>
+                        <td>${item.name}</td>
+                        <td>${item.price}</td>
+                        <td>
+                            <button class="decrease" data-index="${index}">-</button>
+                            ${item.quantity}
+                            <button class="increase" data-index="${index}">+</button>
+                        </td>
+                        <td>${totalItemPrice}</td>
+                        <td><button class="remove-item" data-index="${index}">移除</button></td>
+                    </tr>
+                    `);
+            });
+
+            $("#total_price").text(totalPrice);
+
+            // 同步更新 modal 內的購物車
+            updateModalCartUI();
+        }
+
+        function updateModalCartUI() {
+            let modalCartBody = $("#modal-cart-body");
+            modalCartBody.empty();  // 清空 modal 內的購物車
+
+            let totalPrice = 0;
+            cart.forEach((item, index) => {
+                let totalItemPrice = item.price * item.quantity;
+                totalPrice += totalItemPrice;
+
+                modalCartBody.append(` 
+            <tr>
+                <td>${item.name}</td>
+                <td>${item.price}</td>
+                <td>
+                    <button class="decrease" data-index="${index}">-</button>
+                    ${item.quantity}
+                    <button class="increase" data-index="${index}">+</button>
+                </td>
+                <td>${totalItemPrice}</td>
+                <td><button class="remove-item" data-index="${index}">移除</button></td>
+            </tr>
+        `);
+            });
+
+            $("#modal-total-price").text(totalPrice);  // 更新 modal 內的總金額
+        }
+
+        // **增加數量**
+        $(document).on("click", ".increase", function () {
+            let index = $(this).data("index");
+            cart[index].quantity++;
+            updateCart();
+        });
+
+        // **減少數量**
+        $(document).on("click", ".decrease", function () {
+            let index = $(this).data("index");
+            if (cart[index].quantity > 1) {
+                cart[index].quantity--;
+            } else {
+                cart.splice(index, 1); // 如果數量變 0，則刪除該商品
+            }
+            updateCart();
+        });
+
+        // **刪除商品**
+        $(document).on("click", ".remove-item", function () {
+            let index = $(this).data("index");
+            cart.splice(index, 1);
+            updateCart();
+        });
+
+        // **結帳**
+        $("#checkout").click(function () {
+            if (cart.length === 0) {
+                alert("購物車是空的");
+                return;
+            }
+
+            $.ajax({
+                url: "product_orders_api_v1.php?action=checkout",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(cartData),
+                dataType: "json",
+                success: function (response) {
+                    console.log("伺服器回應:", response);
+                    console.log("送出的資料：", JSON.stringify({
+                        uid01: getCookie("Uid01"), // 確認 cookie 中的 uid01
+                        cart: cart // 確認購物車資料
+                    }));
+                    // 檢查回應的 state 是否為 true，並顯示對應訊息
+                    if (response.state) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '訂單成功',
+                            text: response.message // 顯示訂單編號或成功訊息
+                        });
+
+                        // 若有其他資料可以處理
+                        if (response.data) {
+                            console.log('訂單資料:', response.data);
+                            // 這裡可以做進一步的資料處理
+                        }
+
+                        // 清空購物車並更新畫面
+                        cart = [];
+                        updateCart();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '數量錯誤!',
+                            text: '請稍後再試'
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("結帳失敗:", xhr.responseText);
+                }
+            });
+        });
+
+        // 按鈕監聽 (sec02_logout_btn)
+        $("#sec02_logout_btn").click(function () {
+            setCookie("Uid01", "", 7);
+            location.href = "product.html";
+        });
+
+
+        function showdata_checkuid(data) {
+            console.log(data);
+            if (data.state) {
+                // 顯示歡迎訊息
+                $("#sec02_username_showtext").removeClass("d-none");
+                $("#sec02_username_text").text(data.data.Username);
+
+                // 顯示登出按鈕
+                $("#sec02_logout_btn").removeClass("d-none");
+                $("#sec02_addmenu").removeClass("d-none");
+
+                if (data.data.Username === 'admin') {
+                    console.log(data.data.Username);
+                    $("#control_admin").removeClass("d-none");
+                    $("#menu_admin").removeClass("d-none");
+                    $("#orders_admin").removeClass("d-none");
+                }
+
+                // 渲染table資料
+                $.ajax({
+                    type: "GET",
+                    url: "product_menu_control_api_v1.php?action=menudata",
+                    dataType: "json",
+                    success: showdata_getalldata,
+                    async: false,
+                    error: function () {
+                        Swal.fire({
+                            title: "API介接錯誤!",
+                            text: "product_menu_control_api_v1.php?action=menudata",
+                            icon: "error",
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: "請先登入會員!",
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product.html";
+                    }
+                });
+            }
+        }
+
+        function showdata_getalldata(data) {
+            console.log(data);
+            if (data.data.Count == 0) {
+                data.data.Status = "out-of-stock";
+            }
+
+            let tableData = [];
+            $("#mydata").empty();
+            data.data.forEach(function (item) {
+                var strHTML = `<tr>
+                            <td data-th="編號">${item.Menu_id}</td>
+                            <td data-th="產品">${item.Name}</td>
+                            <td data-th="價格">${item.Price}</td>
+                            <td data-th="數量">${item.Count}</td>
+                            <td data-th="狀態">${item.Status}</td>
+                            <td data-th="功能">
+                                <button class="btn btn-warning btn-lg me-2 add-to-cart-menu" data-id="${item.Menu_id}" data-name="${item.Name}" data-price="${item.Price}"
+                                    data-count="${item.Count}" data-status="${item.Status}" ${item.Status !== "available" ? "disabled" : ""}>加入購物車</button>
+                            </td>
+                        </tr>`;
+                $("#mydata").append(strHTML);
+            });
+
+            // 初始化 DataTable
+            $("#menuTable").DataTable({
+                "paging": true,        // 啟用分頁
+                "searching": true,     // 啟用搜尋
+                "lengthMenu": [10, 25, 50, 100], // 設定每頁顯示數量
+                "language": {
+                    "paginate": {
+                        "previous": "上一頁",
+                        "next": "下一頁"
+                    },
+                    "search": "搜尋：",
+                    "lengthMenu": "顯示 _MENU_ 筆資料",
+                    "info": "顯示 _START_ 到 _END_ ，共 _TOTAL_ 筆資料"
+                }
+            });
+        }
+
+        function addToCart(productId, productName, productPrice, productCount) {
+            const cartItem = { id: productId, name: productName, quantity: productCount, price: productPrice, };
+            const Uid01 = cartData.Uid01;
+            console.log(cartItem);
+
+            if (!Uid01) {
+                console.error('未登入，無法將商品加入購物車');
+                return;
+            }
+
+            // 檢查是否已有此商品在購物車裡
+            const existingItemIndex = cartData.cart.findIndex(item => item.id === productId);
+            if (existingItemIndex !== -1) {
+                // 如果商品已存在，則只增加數量
+                cartData.cart[existingItemIndex].quantity += productCount;
+                console.log("商品數量已更新:", cartData.cart[existingItemIndex]);
+            } else {
+                // 如果商品不存在，則將商品新增到購物車
+                cartData.cart.push(cartItem);
+                console.log("商品已加入購物車:", cartItem);
+            }
+
+            // 查看 cart 是否正確更新
+            console.log("更新後的購物車:", cartData.cart);
+
+            // 更新購物車視圖（可以重新渲染購物車的 HTML）
+            updateCart();
+            updateModalCartUI();  // 更新 modal 內的購物車
+
+            fetch(`product_orders_api_v1.php?action=add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    Uid01: Uid01,
+                    cart: [cartItem]
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('商品已成功加入購物車！');
+                        // 更新購物車視圖（可以重新刷新購物車資料）
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function fetchOrderHistory() {
+            const Uid01 = cartData.Uid01;
+
+            fetch(`product_orders_api_v1.php?action=getOrders&Uid01=${Uid01}`, {
+                method: 'GET', // 這裡使用 GET 請求來查詢歷史訂單
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())  // 確保回應是 JSON 格式
+                .then(data => {
+                    console.log("API 回傳的資料:", data);
+                    if (data.success) {
+                        displayOrderHistory(data.orders); // 如果成功，顯示訂單
+                    } else {
+                        alert('無法取得歷史訂單：' + data.message); // 顯示錯誤信息
+                    }
+                })
+                .catch(error => console.error('Error fetching order history:', error));
+        }
+
+        function displayOrderHistory(orders) {
+            console.log(orders);
+            const orderContainer = document.getElementById('orderHistoryContainer');  // 這是顯示訂單的容器
+
+            console.log(orderContainer);
+
+            if (!orderContainer) {
+                console.error('找不到顯示訂單的容器');
+                return;
+            }
+
+            orderContainer.innerHTML = ''; // 清空原有的訂單
+
+            if (orders.length === 0) {
+                orderContainer.innerHTML = '沒有歷史訂單';  // 如果沒有訂單，顯示提示
+                return;
+            }
+
+            let table = document.createElement('table');
+            table.id = "orderHistoryTable";
+            table.classList.add('table', 'table-striped', 'table-bordered');
+            table.innerHTML = `
+            <table id="orderHistoryTable" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>訂單編號</th>
+                    <th>總金額</th>
+                    <th>訂單內容</th>
+                    <th>狀態</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+                        `;
+            const tbody = table.querySelector('tbody');
+
+            // 遍歷訂單並填充表格
+            let tableData = [];
+            orders.forEach(order => {
+                let row = document.createElement('tr');
+
+                let productNames = order.items.map(item => `${item.Name} (${item.quantity}個)`).join('<br>');
+
+                let statusText = '';
+                if (order.status === 0) statusText = '未完成';
+                else if (order.status === 1) statusText = '已完成';
+                else if (order.status === 2) statusText = '已取消';
+
+                row.innerHTML = `
+                        <td>${order.orderId}</td>
+                        <td>${order.totalPrice} 元</td>
+                        <td>${productNames}</td>
+                        <td>${statusText}</td>
+                       <td>
+                            ${(order.status === 0) ? `
+                                <button class="cancel-order-btn btn btn-danger" data-id="${order.orderId}">
+                                    取消訂單
+                                </button>` : ''}
+                            
+                            ${(order.status === 1) ? `
+                                <button class="add-to-cart-history btn btn-warning" 
+                                    data-id="${order.orderId}" 
+                                    data-items='${JSON.stringify(order.items)}'>
+                                    加入購物車
+                                </button>` : ''}
+                        </td>
+                    `;
+                tbody.appendChild(row);
+            });
+
+            orderContainer.innerHTML = '';  // 清空舊內容
+            orderContainer.appendChild(table);  // 將表格加入到容器內
+            orderContainer.style.display = 'block';  // 顯示表格
+
+            // 初始化 DataTable
+            $("#orderHistoryTable").DataTable({
+                "destroy": true,  // 確保不會重複初始化
+                "paging": true,    // 啟用分頁
+                "searching": true, // 啟用搜尋
+                "lengthMenu": [10, 25, 50, 100],
+                "language": {
+                    "paginate": { "previous": "上一頁", "next": "下一頁" },
+                    "search": "搜尋：",
+                    "lengthMenu": "顯示 _MENU_ 筆資料",
+                    "info": "顯示 _START_ 到 _END_ ，共 _TOTAL_ 筆訂單"
+                }
+            });
+
+            document.querySelectorAll('.add-to-cart-history').forEach(button => {
+                button.addEventListener('click', function () {
+                    let orderId = this.getAttribute('data-id');
+                    addOrderToCart(orderId);
+                });
+            });
+
+            document.querySelectorAll('.cancel-order-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const orderId = this.getAttribute('data-id');
+                    cancelOrder(orderId);  // 處理取消訂單邏輯
+                });
+            });
+
+        }
+
+        // 假設這是處理將訂單內容加入購物車的函數
+        function addOrderToCart(orderId) {
+            console.log(`將訂單 ${orderId} 加入購物車`);
+
+            // 向後端請求訂單的商品資料
+            fetch(`product_orders_api_v1.php?action=getOrderDetails&orderId=${orderId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.success) {
+                        const orderItems = data.items;  // 這應該是包含商品資訊的陣列
+
+                        console.log(orderItems);
+                        orderItems.forEach(item => {
+                            console.log("正在處理的商品：", item);
+
+                            let productId = item.product_id;
+                            let productName = item.Name;
+                            let productPrice = parseFloat(item.price);
+                            let productCount = parseInt(item.quantity);
+
+                            console.log("加入到購物車的商品：", productId, productName, productPrice, productCount);
+
+                            // 檢查該商品是否已經在購物車中
+                            const existingItem = cartData.cart.find(cartItem => cartItem.id === productId);
+                            if (!existingItem) {
+                                // 如果商品不在購物車中，則將商品加入購物車
+                                const cartItem = { id: productId, name: productName, quantity: productCount, price: productPrice };
+
+                                cartData.cart.push(cartItem);
+                                console.log("商品已加入購物車:", cartItem);
+                            } else {
+                                // 如果商品已經在購物車中，則只更新數量
+                                existingItem.quantity += productCount;
+                                console.log("已更新購物車中的商品數量:", existingItem);
+                            }
+
+                            // 更新購物車視圖
+                            updateCart();
+                            updateModalCartUI();  // 更新 modal 內的購物車
+                        });
+                        Swal.fire({
+                            title: '成功!',
+                            text: '訂單已成功加入購物車!',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        console.error('無法獲取訂單詳細資料');
+                    }
+                })
+                .catch(error => {
+                    console.error('發生錯誤：', error);
+                });
+        }
+
+        function cancelOrder(orderId) {
+            if (!confirm("確定要取消這個訂單嗎？")) {
+                return;  // 如果用戶取消操作，就不做任何處理
+            }
+
+            // 發送取消訂單的請求到後端
+            fetch(`product_orders_api_v1.php?action=cancelOrder&orderId=${orderId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("訂單已成功取消！");
+                        // 重新載入訂單列表或更新顯示
+                        fetchOrderHistory();
+                    } else {
+                        alert("取消訂單失敗: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("取消訂單時出錯:", error);
+                    alert("取消訂單時發生錯誤");
+                });
+        }
+
+        // from w3school
+        function setCookie(cname, cvalue, exdays) {
+            const d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+    </script>
+</body>
+
+</html>

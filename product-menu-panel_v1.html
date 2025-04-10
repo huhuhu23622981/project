@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菜單管理</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/my.css">
+</head>
+
+<body>
+    <section id="sec02" class="bg-dark">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="product-control-panel_v1.html">
+                        <div class="h1">菜單管理</div>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product.html">首頁</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="product-control-panel_v1.html">控制台</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="product-menu-panel_v1.html">新增菜單</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product-chart.html">報表</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="product-menu_cart.html">菜單</a>
+                            </li>
+                            <li class="nav-item" id="orders_admin">
+                                <a class="nav-link" aria-current="page" href="product_orders.html">訂單管理</a>
+                            </li>
+                        </ul>
+                        <div>
+                            <span class="h4 text-info fw-900 me-3 d-none" id="sec02_username_showtext">歡迎會員: <span
+                                    class="h3 text-warning" id="sec02_username_text">xxx</span></span>
+                            <button class="btn btn-danger d-none" id="sec02_logout_btn">登出</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </section>
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col-12">
+                <button class="btn btn-warning d-none" data-bs-toggle="modal" data-bs-target="#addmenuModal"
+                    id="sec02_addmenu">新增菜單</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table class="table shadow-lg mt-2 table-rwd">
+                    <thead>
+                        <tr>
+                            <th>編號</th>
+                            <th>產品</th>
+                            <th>價格</th>
+                            <th>數量</th>
+                            <th>狀態</th>
+                            <th>上架時間</th>
+                            <th>功能</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mydata">
+                        <tr>
+                            <td data-th="編號">xx</td>
+                            <td data-th="產品">xx</td>
+                            <td data-th="價格">xx</td>
+                            <td data-th="數量">xx</td>
+                            <td data-th="狀態">xx</td>
+                            <td data-th="註冊時間">xx</td>
+                            <td data-th="功能">
+                                <button class="btn btn-warning me-2" data-bs-toggle="modal"
+                                    data-bs-target="#updateModal" data-id="xx" data-name="xx" data-price="xxxx"
+                                    data-count="xx" data-status="xxxx" id="update_btn">更新</button>
+                                <button class="btn btn-danger">下架</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- addmenuModal -->
+    <div class="modal fade" id="addmenuModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header text-bg-warning">
+                    <h1 class="modal-title fs-4 fw-900" id="exampleModalLabel">菜單新增</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="name_add" class="form-label">產品名稱</label>
+                                <input type="text" class="form-control is-invalid" id="name_add" name="name_add"
+                                    placeholder="2-10字數">
+                                <div class="valid-feedback" id="regModal_name_valid_feedback">符合規則</div>
+                                <div class="invalid-feedback" id="regModal_name_invalid_feedback">不符合規則</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="price_add" class="form-label">價格</label>
+                                <input type="text" class="form-control is-invalid" id="price_add" name="price_add">
+                                <div class="valid-feedback">符合規則</div>
+                                <div class="invalid-feedback">不符合規則</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="count_add" class="form-label">數量</label>
+                                <input type="text" class="form-control is-invalid" id="count_add" name="count_add">
+                                <div class="valid-feedback">符合規則</div>
+                                <div class="invalid-feedback">不符合規則</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="status_add" class="form-label">狀態</label>
+                                <select name="status_add" id="status_add" class="form-select form-select-lg">
+                                    <option value="" class="text-center" selected disabled>---請選擇狀態---</option>
+                                    <option value="Available">Available</option>
+                                    <option value="Out of Stock">Out of Stock</option>
+                                    <option value="Pre-order">Pre-order</option>
+                                </select>
+                                <div class="invalid-feedback">請選擇狀態</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="ok_btn_reg">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- updataModal-->
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-bg-warning fw-900">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">產品資料更新</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="updateModal_name" class="form-label">產品</label>
+                        <input type="text" class="form-control" disabled id="updateModal_name" name="updateModal_name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateModal_price" class="form-label">價格</label>
+                        <input type="text" class="form-control is-valid" id="updateModal_price"
+                            name="updateModal_price">
+                        <div class="valid-feedback">符合規則</div>
+                        <div class="invalid-feedback">不符合規則</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateModal_count" class="form-label">數量</label>
+                        <input type="text" class="form-control is-valid" id="updateModal_count"
+                            name="updateModal_count">
+                        <div class="valid-feedback">符合規則</div>
+                        <div class="invalid-feedback">不符合規則</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateModal_status" class="form-label">狀態</label>
+                        <select name="updateModal_status" id="updateModal_status" class="form-select-lg">
+                            <option value="" class="text-center" selected disabled>---請選擇狀態---</option>
+                            <option value="Available">Available</option>
+                            <option value="Out of Stock">Out of Stock</option>
+                            <option value="Pre-order">Pre-order</option>
+                        </select>
+                        <div class="invalid-feedback">請選擇狀態</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="updateModal_update_btn">確認更新</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        var flag_name_add = false;
+        var flag_price_add = false;
+        var flag_count_add = false;
+        var flag_status_add = false;
+
+        var flag_updateModal_price = true;
+        var flag_updateModal_count = true;
+        var flag_updateModal_status = true;
+        var u_id; // for update
+        $(function () {
+            // 確認uid是否合法
+            if (getCookie("Uid01")) {
+                // 將uid01傳遞至後端API執行驗證
+                // input:{"uid01" : "xxxxx"}
+                var JSONdata = {};
+                JSONdata["uid01"] = getCookie("Uid01");
+                console.log(JSON.stringify(JSONdata));
+
+                $.ajax({
+                    type: "POST",
+                    url: "product_menu_control_api_v1.php?action=checkuid",
+                    data: JSON.stringify(JSONdata),
+                    dataType: "json",
+                    success: showdata_checkuid,
+                    error: function () {
+                        Swal.fire({
+                            title: "API介接錯誤!",
+                            text: "product_menu_control_api_v1.php?action=checkuid",
+                            icon: "error",
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: "請先登入會員!",
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product.html";
+                    }
+                });
+            }
+        });
+
+        function showdata_addmenu(data) {
+            console.log(data);
+            if (data.state) {
+                Swal.fire({
+                    title: data.message,
+                    icon: "success"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "product-menu-panel_v1.html";
+                    }
+                });;
+            } else {
+                Swal.fire({
+                    title: data.message,
+                    icon: "error"
+                });
+            }
+        }
+
+        function showdata_checkuid(data) {
+            console.log(data);
+            if (data.state) {
+                if(data.data.Username === "admin")
+            {
+                // 顯示歡迎訊息
+                $("#sec02_username_showtext").removeClass("d-none");
+                $("#sec02_username_text").text(data.data.Username);
+
+                // 顯示登出按鈕
+                $("#sec02_logout_btn").removeClass("d-none");
+                $("#sec02_addmenu").removeClass("d-none");
+
+                // 渲染table資料
+                $.ajax({
+                    type: "GET",
+                    url: "product_menu_control_api_v1.php?action=menudata",
+                    dataType: "json",
+                    success: showdata_getalldata,
+                    async: false,
+                    error: function () {
+                        Swal.fire({
+                            title: "API介接錯誤!",
+                            text: "product_menu_control_api_v1.php?action=menudata",
+                            icon: "error",
+                        });
+                    }
+                });
+
+                // 即時監聽(name_add)
+                $("#name_add").bind("input propertychange", function () {
+                    if ($(this).val().length > 2 && $(this).val().length < 10) {
+                        // 傳遞至後端API確認帳號是否可以使用
+                        // input:{"name" : "xx咖啡"}
+                        var JSONdata = {};
+                        JSONdata["name"] = $("#name_add").val();
+                        console.log(JSON.stringify(JSONdata));
+
+                        $.ajax({
+                            type: "POST",
+                            url: "product_menu_control_api_v1.php?action=checkuni",
+                            data: JSON.stringify(JSONdata),
+                            dataType: "json",
+                            success: showdata_checkuni,
+                            error: function () {
+                                Swal.fire({
+                                    title: "API介接錯誤!",
+                                    text: "product_menu_control_api_v1.php?action=checkuni",
+                                    icon: "error"
+                                });
+                            }
+                        });
+                    } else {
+                        $(this).removeClass("is-valid");
+                        $(this).addClass("is-invalid");
+                        $("#regModal_name_invalid_feedback").text("不符合規則");
+                        flag_name_reg = false;
+                    }
+                });
+
+                // 即時監聽(price_add)
+                $("#price_add").bind("input propertychange", function () {
+
+                    $("#flag_price_add").removeClass("is-valid");
+                    $("#flag_price_add").addClass("is-invalid");
+                    flag_price_add = false;
+
+                    if ($(this).val().length > 0 && $(this).val().length < 4) {
+                        $(this).removeClass("is-invalid");
+                        $(this).addClass("is-valid");
+                        flag_price_add = true;
+                    } else {
+                        $(this).removeClass("is-valid");
+                        $(this).addClass("is-invalid");
+                        flag_price_add = false;
+                    }
+                });
+
+                // 即時監聽(count_add)
+                $("#count_add").bind("input propertychange", function () {
+
+                    $("#flag_count_add").removeClass("is-valid");
+                    $("#flag_count_add").addClass("is-invalid");
+                    flag_count_add = false;
+
+                    if ($(this).val().length > 0 && $(this).val().length < 5) {
+                        $(this).removeClass("is-invalid");
+                        $(this).addClass("is-valid");
+                        flag_count_add = true;
+                    } else {
+                        $(this).removeClass("is-valid");
+                        $(this).addClass("is-invalid");
+                        flag_count_add = false;
+                    }
+                });
+
+                // 即時監聽(status_add)
+                $("#status_add").bind("input propertychange", function () {
+                    console.log($(this).val());
+                    if ($(this).val() != "") {
+                        $(this).removeClass("is-invalid");
+                        $(this).addClass("is-valid");
+                        flag_status_add = true;
+                    }
+                });
+
+
+                // 按鈕監聽(ok_btn_reg)
+                $("#ok_btn_reg").click(function () {
+                    if (flag_name_add && flag_price_add && flag_count_add && flag_status_add) {
+                        // 傳遞至後端API執行註冊行為
+                        // input:{"name" : "xx咖啡", "price" : "xx", "count" : "xx", "status" : "avaliable"}
+                        var JSONdata = {};
+                        JSONdata["name"] = $("#name_add").val();
+                        JSONdata["price"] = $("#price_add").val();
+                        JSONdata["count"] = $("#count_add").val();
+                        JSONdata["status"] = $("#status_add").val();
+                        console.log(JSON.stringify(JSONdata));
+
+                        $.ajax({
+                            type: "POST",
+                            url: "product_menu_control_api_v1.php?action=addmenu",
+                            data: JSON.stringify(JSONdata),
+                            dataType: "json",
+                            success: showdata_addmenu,
+                            error: function () {
+                                Swal.fire({
+                                    title: "API介接錯誤!",
+                                    text: "product_menu_control_api_v1.php?action=addmenu",
+                                    icon: "error"
+                                });
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "欄位有錯誤, 請修正!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#3085d6",
+                            cancelButtonColor: "#d33",
+                            confirmButtonText: "確認"
+                        }).then((result) => {
+                        });
+                    }
+                });
+
+                // 即時監聽 updateModal_price
+                $("#updateModal_price").bind("input propertychange", function () {
+                    if ($(this).val().length > 0 && $(this).val().length < 4) {
+                        $(this).removeClass("is-invalid");
+                        $(this).addClass("is-valid");
+                        flag_updateModal_price = true;
+                    } else {
+                        $(this).removeClass("is-valid");
+                        $(this).addClass("is-invalid");
+                        flag_updateModal_price = false;
+                    }
+                });
+
+                // 即時監聽 updateModal_count
+                $("#updateModal_count").bind("input propertychange", function () {
+                    if ($(this).val().length > 0 && $(this).val().length < 4) {
+                        $(this).removeClass("is-invalid");
+                        $(this).addClass("is-valid");
+                        flag_updateModal_count = true;
+                    } else {
+                        $(this).removeClass("is-valid");
+                        $(this).addClass("is-invalid");
+                        flag_updateModal_count = false;
+                    }
+                });
+
+                // 即時監聽 updataModal_status
+                $("#updateModal_status").bind("input propertychange", function () {
+                    console.log($(this).val());
+                    if ($(this).val() != "") {
+                        $(this).removeClass("is-invalid");
+                        $(this).addClass("is-valid");
+                        flag_updateModal_status = true;
+                    }
+                });
+
+                // 按鈕監聽update_btn
+                $("#mydata #update_btn").click(function () {
+                    console.log($(this).data("id"));
+                    console.log($(this).data("name"));
+                    console.log($(this).data("price"));
+                    console.log($(this).data("count"));
+                    console.log($(this).data("status"));
+
+                    //將資料同步至modal
+                    u_id = $(this).data("id");
+                    $("#updateModal_name").val($(this).data("name"));
+                    $("#updateModal_price").val($(this).data("price"));
+                    $("#updateModal_count").val($(this).data("count"));
+                    $("#updateModal_status").val($(this).data("status"));
+                });
+
+                // 按鈕監聽 delete_btn
+                $("#mydata #delete_btn").click(function () {
+                    Swal.fire({
+                        title: "確認下架商品?",
+                        showDenyButton: true,
+                        showCancelButton: false,
+                        confirmButtonText: "確認",
+                        denyButtonText: `取消`,
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            console.log($(this).data("id"));
+                            // 傳遞至後端API執行刪除行為
+                            var JSONdata = {};
+                            JSONdata["id"] = $(this).data("id");
+                            console.log(JSON.stringify(JSONdata));
+                            $.ajax({
+                                type: "DELETE",
+                                url: "product_menu_control_api_v1.php?action=delete",
+                                data: JSON.stringify(JSONdata),
+                                dataType: "json",
+                                success: showdata_delete,
+                                error: function () {
+                                    Swal.fire({
+                                        title: "API介接錯誤!",
+                                        text: "product_menu_control_api_v1.php?action=delete",
+                                        icon: "error"
+                                    });
+                                }
+                            });
+                        }
+                    })
+                });
+
+                // 按鈕監聽updateModal_update_btn
+                $("#updateModal_update_btn").click(function () {
+                    if (flag_updateModal_price && flag_updateModal_count && flag_updateModal_status) {
+                        console.log($("#updateModal_price").val());
+                        console.log($("#updateModal_count").val());
+                        console.log($("#updateModal_status").val());
+                        // 傳遞至後端API執行更新
+                        var JSONdata = {};
+                        JSONdata["menu_id"] = u_id;
+                        JSONdata["price"] = $("#updateModal_price").val();
+                        JSONdata["count"] = $("#updateModal_count").val();
+                        JSONdata["status"] = $("#updateModal_status").val();
+                        console.log(JSON.stringify(JSONdata));
+
+                        $.ajax({
+                            type: "POST",
+                            url: "product_menu_control_api_v1.php?action=updatemenu",
+                            data: JSON.stringify(JSONdata),
+                            dataType: "json",
+                            success: showdata_update,
+                            error: function () {
+                                Swal.fire({
+                                    title: "API介接錯誤!",
+                                    text: "product_menu_control_api_v1.php?action=updatemenu",
+                                    icon: "error",
+                                });
+                            }
+                        });
+
+                    } else {
+                        Swal.fire({
+                            title: "欄位內容有錯誤!",
+                            icon: "error",
+                        });
+                    }
+                })
+            }else {
+                Swal.fire({
+                    title: "你沒有權限!",
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product.html";
+                    }
+                });
+            }
+                
+
+            } else {
+                Swal.fire({
+                    title: "請先登入會員!",
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product.html";
+                    }
+                });
+            }
+
+            // 按鈕監聽 (sec02_logout_btn)
+            $("#sec02_logout_btn").click(function () {
+                setCookie("Uid01", "", 7);
+                location.href = "product.html";
+            });
+        }
+
+        function showdata_getalldata(data) {
+            console.log(data);
+
+            $("#mydata").empty();
+            data.data.forEach(function (item) {
+                var strHTML = `<tr>
+                            <td data-th="編號">${item.Menu_id}</td>
+                            <td data-th="產品">${item.Name}</td>
+                            <td data-th="價格">${item.Price}</td>
+                            <td data-th="數量">${item.Count}</td>
+                            <td data-th="狀態">${item.Status}</td>
+                            <td data-th="上架時間">${item.Created_at}</td>
+                            <td data-th="功能">
+                                <button class="btn btn-warning me-2" data-bs-toggle="modal"
+                                    data-bs-target="#updateModal" data-id="${item.Menu_id}" data-name="${item.Name}" data-price="${item.Price}" data-count="${item.Count}" data-status="${item.Status}" id="update_btn">更新</button>
+                               <button class="btn btn-danger" data-id="${item.Menu_id}" id="delete_btn">下架</button>
+                            </td>
+                        </tr>`;
+                $("#mydata").append(strHTML);
+            });
+        }
+
+        function showdata_update(data) {
+            console.log(data);
+            if (data.state) {
+                Swal.fire({
+                    title: data.message,
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    icon: "success",
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product-menu-panel_v1.html";
+                    }
+                })
+            } else {
+                Swal.fire({
+                    title: data.message,
+                    icon: "error",
+                });
+            }
+        }
+
+        function showdata_delete(data) {
+            console.log(data);
+            if (data.state) {
+                Swal.fire({
+                    title: data.message,
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: "確認",
+                    denyButtonText: `Don't save`,
+                    icon: "success",
+                    allowOutsideClick: false
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        location.href = "product-menu-panel_v1.html"
+                    }
+                })
+            } else {
+                Swal.fire({
+                    title: data.message,
+                    icon: "error"
+                });
+            }
+        }
+
+        function showdata_checkuni(data) {
+            console.log(data);
+            if (data.state) {
+                // 帳號不存在,可以使用
+                $("#name_add").removeClass("is-invalid");
+                $("#name_add").addClass("is-valid");
+                $("#regModal_name_valid_feedback").text(data.message);
+                flag_name_add = true;
+            } else {
+                // 帳號存在,不可以使用
+                $("#name_add").removeClass("is-valid");
+                $("#name_add").addClass("is-invalid");
+                $("#regModal_name_invalid_feedback").text(data.message);
+                flag_name_add = false;
+            }
+        }
+
+        // from w3school
+        function setCookie(cname, cvalue, exdays) {
+            const d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+    </script>
+</body>
+
+</html>
