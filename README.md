@@ -26,6 +26,7 @@
 - jQuery
 - chart.js
 - dataTable
+- counterup
 
 
 ## 功能簡介
