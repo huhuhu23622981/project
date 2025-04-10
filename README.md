@@ -2,11 +2,11 @@
 
 > 首頁
 
-![首頁(未登入)](https://huhuhu23622981.github.io/project/images/pic1)
-![首頁(未登入)](https://huhuhu23622981.github.io/project/images/pic2)
-![首頁(一般會員)](https://huhuhu23622981.github.io/project/images/pic3)
-![首頁(VIP)](https://huhuhu23622981.github.io/project/images/pic4)
-![首頁(VVIP)](https://huhuhu23622981.github.io/project/images/pic5)
+![首頁(未登入)](https://huhuhu23622981.github.io/project/images/pic1.png)
+![首頁(未登入)](https://huhuhu23622981.github.io/project/images/pic2.png)
+![首頁(一般會員)](https://huhuhu23622981.github.io/project/images/pic3.png)
+![首頁(VIP)](https://huhuhu23622981.github.io/project/images/pic4.png)
+![首頁(VVIP)](https://huhuhu23622981.github.io/project/images/pic5.png)
 
 > 產品渲染與功能頁面
 
