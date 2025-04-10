@@ -10,14 +10,15 @@
 
 > 產品渲染與功能頁面
 
-![img5]()
-![img4]()
-
-
+![菜單+購物車](https://huhuhu23622981.github.io/project/images/pic7.png)
+![各項報表](https://huhuhu23622981.github.io/project/images/pic8.png)
 
 > 後台頁面
 
-![img6]()
+![控制台](https://huhuhu23622981.github.io/project/images/pic10.png)
+![菜單+CRUD](https://huhuhu23622981.github.io/project/images/pic9.png)
+![訂單管理](https://huhuhu23622981.github.io/project/images/pic6.png)
+![管理員報表](https://huhuhu23622981.github.io/project/images/pic11.png)
 
 
 ## 專案技術
