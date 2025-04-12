@@ -5,8 +5,8 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 const DB_SERVER   = "sql102.infinityfree.com";
 const DB_USERNAME = "if0_38646809";
-const DB_PASSWORD = "12345bbcMG4Ncxan6OuP";
-const DB_NAME     = "product_db";
+const DB_PASSWORD = "bbcMG4Ncxan6OuP";
+const DB_NAME     = "if0_38646809_20250401";
 
 //建立連線
 function create_connection()
