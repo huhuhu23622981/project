@@ -1,4 +1,8 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+
 const DB_SERVER   = "sql102.infinityfree.com";
 const DB_USERNAME = "if0_38646809";
 const DB_PASSWORD = "12345bbcMG4Ncxan6OuP";
